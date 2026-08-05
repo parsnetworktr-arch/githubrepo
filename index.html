@@ -84,10 +84,17 @@ button,input,textarea{font:inherit}
 [data-theme="light"] .new-chat{background:var(--surface);color:var(--text)}
 
 .sidebar-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;margin:18px 0 8px}
-.history{display:grid;gap:3px;overflow:auto}
-.history button{color:var(--text);background:transparent;border:0;border-radius:8px;padding:10px;text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.15s}
-.history button:hover,.history button.active{background:#302a27;color:#ff9b76}
-[data-theme="light"] .history button:hover,[data-theme="light"] .history button.active{background:#e8e0d8;color:var(--accent)}
+.history{display:flex;flex-direction:column;gap:4px;overflow:auto;padding-right:4px}
+.history-item{display:flex;align-items:center;justify-content:space-between;border-radius:8px;padding:2px 6px 2px 10px;cursor:pointer;transition:.15s;background:transparent;border:1px solid transparent}
+.history-item:hover,.history-item.active{background:var(--hover-bg)}
+[data-theme="light"] .history-item:hover,[data-theme="light"] .history-item.active{background:#e8e0d8}
+.history-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;padding:8px 0;border:0;background:transparent;color:var(--text);outline:none;cursor:pointer}
+.history-item.active .history-title{color:var(--accent)}
+.history-actions{display:flex;gap:2px;opacity:0;transition:.2s}
+.history-item:hover .history-actions,.history-item.active .history-actions{opacity:1}
+.history-btn{width:26px;height:26px;border-radius:6px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:.15s}
+.history-btn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+[data-theme="light"] .history-btn:hover{background:rgba(0,0,0,.08);color:var(--text)}
 
 /* ===== ACCOUNT AREA ===== */
 .account-area{position:relative;margin-top:auto;border-top:1px solid var(--line);padding-top:15px}
@@ -692,6 +699,8 @@ let selected = null;
 let used = Number(localStorage.getItem('multiai-used') || 0);
 let busy = false;
 let chats = JSON.parse(localStorage.getItem('multiai-chats') || '[]');
+let activeChatId = null;
+chats.forEach(c => { if(!c.id) c.id = Math.random().toString(36).slice(2); if(!c.messages) c.messages = []; });
 let resetAt = Number(localStorage.getItem('multiai-reset-at') || 0);
 let currentMode = localStorage.getItem('multiai-mode') || 'normal';
 let localRegistry = [];
@@ -1214,11 +1223,62 @@ async function loadModels() {
 function renderHistory() {
   const h = $('#history');
   h.innerHTML = '';
-  (chats.length ? chats : [{ title: 'Yeni sohbet' }]).slice(0, 12).forEach((c, i) => {
-    const b = document.createElement('button');
-    b.textContent = c.title;
-    b.className = i === 0 ? 'active' : '';
-    h.append(b);
+  if(!chats.length) {
+    h.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:10px;">Henüz sohbet yok.</div>';
+    return;
+  }
+  chats.slice(0, 15).forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'history-item' + (c.id === activeChatId ? ' active' : '');
+    d.innerHTML = `
+      <input class="history-title" value="${escHtml(c.title)}" readonly>
+      <div class="history-actions">
+        <button class="history-btn edit-btn" title="Yeniden adlandır"><i class="fa-solid fa-pen"></i></button>
+        <button class="history-btn del-btn" title="Sil"><i class="fa-solid fa-trash"></i></button>
+      </div>`;
+    
+    const inp = d.querySelector('.history-title');
+    d.onclick = (e) => {
+      if(e.target.closest('.history-btn') || e.target === inp && !inp.readOnly) return;
+      loadChat(c.id);
+    };
+
+    d.querySelector('.edit-btn').onclick = () => {
+      inp.readOnly = false;
+      inp.focus();
+      inp.select();
+    };
+    
+    inp.onblur = inp.onkeydown = (e) => {
+      if(e.type === 'keydown' && e.key !== 'Enter') return;
+      inp.readOnly = true;
+      if(inp.value.trim()){ c.title = inp.value.trim(); localStorage.setItem('multiai-chats', JSON.stringify(chats)); }
+      else { inp.value = c.title; }
+    };
+
+    d.querySelector('.del-btn').onclick = () => {
+      if(!confirm('Sohbeti silmek istediğinize emin misiniz?')) return;
+      chats = chats.filter(x => x.id !== c.id);
+      localStorage.setItem('multiai-chats', JSON.stringify(chats));
+      if(activeChatId === c.id) fresh();
+      renderHistory();
+    };
+    h.append(d);
+  });
+}
+
+function loadChat(id) {
+  const c = chats.find(x => x.id === id);
+  if(!c) return;
+  activeChatId = id;
+  renderHistory();
+  $('#welcome').style.display = 'none';
+  $('#chips').style.display = 'none';
+  $('#modeBar').style.display = 'none';
+  $('#conversation').style.display = 'block';
+  $('#conversation').innerHTML = '';
+  c.messages.forEach(m => {
+    addMessage(m.role, m.text, m.model);
   });
 }
 
@@ -1276,6 +1336,17 @@ async function send() {
   $('#conversation').style.display = 'block';
   addMessage('user', question);
   input.value = '';
+
+  let chat = chats.find(c => c.id === activeChatId);
+  if (!chat) {
+    activeChatId = Date.now().toString();
+    chat = { id: activeChatId, title: question.slice(0, 42), messages: [] };
+    chats.unshift(chat);
+    chats = chats.slice(0, 15);
+  }
+  chat.messages.push({ role: 'user', text: question });
+  localStorage.setItem('multiai-chats', JSON.stringify(chats));
+  renderHistory();
   busy = true;
   updateUI();
 
@@ -1346,9 +1417,12 @@ async function send() {
     bubble.classList.remove('thinking');
     used++;
     localStorage.setItem('multiai-used', used);
-    chats.unshift({ title: question.slice(0, 42) });
-    chats = chats.slice(0, 12);
-    localStorage.setItem('multiai-chats', JSON.stringify(chats));
+    
+    let chatToUpdate = chats.find(c => c.id === activeChatId);
+    if (chatToUpdate) {
+      chatToUpdate.messages.push({ role: 'assistant', text: finalText, model: modelLabel(selected || active) });
+      localStorage.setItem('multiai-chats', JSON.stringify(chats));
+    }
     renderHistory();
     if (used >= getCurrentLimit() && !isAdmin()) showLimit();
 
@@ -1378,6 +1452,7 @@ async function send() {
 }
 
 function fresh() {
+  activeChatId = null;
   $('#conversation').innerHTML = '';
   $('#conversation').style.display = 'none';
   $('#welcome').style.display = 'block';
@@ -1385,6 +1460,7 @@ function fresh() {
   $('#modeBar').style.display = 'flex';
   $('#limitNote').classList.remove('show');
   $('#prompt').focus();
+  renderHistory();
 }
 
 function upgrade() { location.href = UPGRADE_URL; }
