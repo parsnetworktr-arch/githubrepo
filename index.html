@@ -752,7 +752,7 @@ function updatePwdStrength(pwd) {
 function detectApiKeyType(key) {
   key = (key || '').trim();
   if (key.startsWith('sk-ant-')) return { type: 'anthropic', name: 'Claude / Anthropic' };
-  if (key.startsWith('AIza')) return { type: 'google', name: 'Gemini / Google' };
+  if (key.startsWith('AIza') || key.startsWith('AQ.')) return { type: 'google', name: 'Gemini / Google' };
   if (key.startsWith('gsk_')) return { type: 'groq', name: 'Groq' };
   if (key.startsWith('sk-')) return { type: 'openai', name: 'OpenAI' };
   return { type: 'unknown', name: 'Bilinmeyen' };
