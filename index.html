@@ -113,8 +113,8 @@ button,input,textarea{font:inherit}
 [data-theme="light"] .account-menu .upgrade{background:#f5ddd5}
 
 /* ===== MAIN AREA ===== */
-.main{display:flex;flex-direction:column;min-width:0}
-.topbar{height:65px;display:flex;align-items:center;justify-content:center;gap:15px;border-bottom:1px solid var(--line);transition:border-color .3s}
+.main{display:flex;flex-direction:column;min-width:0;height:100vh}
+.topbar{height:65px;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:15px;border-bottom:1px solid var(--line);transition:border-color .3s}
 .plan{border-radius:11px;background:var(--input-bg);border:1px solid var(--input-border);padding:10px 13px;color:var(--muted);font-size:14px;transition:.3s}
 .plan button{border:0;background:transparent;color:var(--accent2);cursor:pointer;text-decoration:underline;font-weight:600}
 .topbar-actions{display:flex;gap:8px;align-items:center}
@@ -124,7 +124,7 @@ button,input,textarea{font:inherit}
 .top-switch-btn:hover{background:var(--hover-bg);transform:translateY(-1px)}
 
 /* ===== WORKSPACE ===== */
-.workspace{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;padding:20px;overflow:hidden}
+.workspace{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;padding:20px 20px 0 20px;overflow:hidden}
 .welcome{text-align:center;margin-bottom:32px;animation:slideUp .5s ease;margin-top:auto}
 .welcome h1{font:clamp(42px,5vw,64px)/1.04 'Instrument Serif';color:var(--text);letter-spacing:-.045em;margin:0}
 .welcome p{margin:13px 0 0;color:var(--muted)}
@@ -137,7 +137,7 @@ button,input,textarea{font:inherit}
 .mode-btn i{font-size:12px}
 
 /* ===== CONVERSATION ===== */
-.conversation{display:none;align-self:stretch;max-width:900px;width:100%;flex:1;overflow-y:auto;overflow-x:hidden;padding:25px 3px;scroll-behavior:smooth}
+.conversation{display:none;align-self:center;max-width:900px;width:100%;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:25px 3px 10px;scroll-behavior:smooth}
 .message{display:flex;gap:12px;margin-bottom:24px;animation:slideUp .3s ease}
 .message.user{justify-content:flex-end}
 .bubble{max-width:78%;line-height:1.7;white-space:pre-wrap;word-break:break-word}
@@ -200,7 +200,7 @@ button,input,textarea{font:inherit}
 .multi-step.done i{color:#6de3c6}
 
 /* ===== COMPOSER ===== */
-.composer-zone{width:min(840px,100%);margin:auto}
+.composer-zone{width:min(840px,100%);margin-top:auto;flex-shrink:0;padding-bottom:18px}
 .composer{border:1px solid var(--line);border-radius:22px;background:var(--surface);padding:14px 15px 11px;box-shadow:0 10px 28px #0003;transition:.25s}
 .composer:focus-within{border-color:#856355;box-shadow:0 0 0 3px rgba(230,125,88,.08),0 10px 28px #0003}
 .composer textarea{display:block;width:100%;height:64px;resize:none;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;padding:4px}
@@ -676,19 +676,25 @@ button,input,textarea{font:inherit}
 
 <!-- User API Key Dialog -->
 <div class="dialog" id="apiKeyDialog">
-<div class="dialog-card" style="width:min(500px,calc(100% - 24px));">
+<div class="dialog-card" style="width:min(560px,calc(100% - 24px));">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
     <h2 style="margin:0;"><i class="fa-solid fa-key" style="color:var(--accent)"></i> API Key Yönetimi</h2>
     <button class="cancel" id="closeApiKeyBtn" style="padding:6px 12px;"><i class="fa-solid fa-xmark"></i></button>
   </div>
-  <p style="color:var(--muted);font-size:13px;margin:0 0 12px;line-height:1.5;">
-    Kendi API key'inizi ekleyerek Puter limiti dışında da model kullanabilirsiniz. Key türü otomatik algılanır.
-  </p>
+  <div style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:12px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-circle-info"></i> API Key Nasıl Çalışır?</div>
+    <ul style="color:var(--muted);font-size:12px;margin:0;padding-left:18px;line-height:1.8;">
+      <li>API Key ekleyerek <b style="color:var(--text);">Puter limiti dışında</b> model kullanabilirsiniz</li>
+      <li>Key yapıştırınca tür otomatik algılanır ve <b style="color:var(--text);">doğrulanır</b></li>
+      <li>Birden fazla key ekleyerek <b style="color:var(--text);">MultiAI modunda</b> en zeki modelleri kullanabilirsiniz</li>
+      <li>Desteklenen: <b style="color:var(--green);">Anthropic · Google · OpenAI · Groq</b></li>
+    </ul>
+  </div>
   <div style="display:flex;gap:8px;">
-    <input id="userApiKeyInput" placeholder="API Key yapıştırın..." style="flex:1;font-family:'DM Mono';font-size:12px;">
+    <input id="userApiKeyInput" placeholder="sk-ant-... veya AIza... veya sk-... veya gsk_..." style="flex:1;font-family:'DM Mono';font-size:12px;">
     <button class="save" id="addUserApiKey" style="white-space:nowrap;"><i class="fa-solid fa-plus"></i> Ekle</button>
   </div>
-  <div id="userApiKeyDetect" style="margin-top:6px;"></div>
+  <div id="userApiKeyDetect" style="margin-top:8px;"></div>
   <div class="api-key-list" id="userApiKeyList"></div>
 </div>
 </div>
@@ -872,60 +878,118 @@ function getAvailableApiModels() {
 
 // ===== API CALL ROUTER =====
 async function callApiModel(apiKey, type, modelApiId, question, systemPrompt) {
-  if (type === 'anthropic') {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: modelApiId,
-        max_tokens: 4096,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: question }]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    return data.content[0].text;
-  }
+  try {
+    if (type === 'anthropic') {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'Content-Type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: modelApiId,
+          max_tokens: 4096,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: question }]
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(`[Anthropic API] ${data.error.message}`);
+      return data.content[0].text;
+    }
 
-  if (type === 'google') {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelApiId}:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ parts: [{ text: question }] }]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    return data.candidates[0].content.parts[0].text;
-  }
+    if (type === 'google') {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelApiId}:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ parts: [{ text: question }] }]
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(`[Google API] ${data.error.message}`);
+      if (!data.candidates || !data.candidates[0]) throw new Error('[Google API] Yanıt alınamadı — model boş yanıt döndü.');
+      return data.candidates[0].content.parts[0].text;
+    }
 
-  if (type === 'groq' || type === 'openai') {
-    const baseUrl = type === 'groq' ? 'https://api.groq.com/openai/v1' : 'https://api.openai.com/v1';
-    const res = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: modelApiId,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: question }
-        ]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    return data.choices[0].message.content;
-  }
+    if (type === 'groq' || type === 'openai') {
+      const baseUrl = type === 'groq' ? 'https://api.groq.com/openai/v1' : 'https://api.openai.com/v1';
+      const provName = type === 'groq' ? 'Groq' : 'OpenAI';
+      const res = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: modelApiId,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: question }
+          ]
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(`[${provName} API] ${data.error.message || JSON.stringify(data.error)}`);
+      return data.choices[0].message.content;
+    }
 
-  throw new Error('Desteklenmeyen API türü: ' + type);
+    throw new Error('Desteklenmeyen API türü: ' + type);
+  } catch (err) {
+    // Tag API errors so we can distinguish them from Puter errors
+    if (!err.message.startsWith('[')) {
+      err.message = `[API Hatası] ${err.message}`;
+    }
+    throw err;
+  }
+}
+
+// ===== API KEY VALIDATION =====
+async function validateApiKey(key, type) {
+  try {
+    if (type === 'anthropic') {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'Content-Type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-haiku-20241022',
+          max_tokens: 10,
+          messages: [{ role: 'user', content: 'test' }]
+        })
+      });
+      const data = await res.json();
+      if (data.error && (data.error.type === 'authentication_error' || data.error.type === 'invalid_api_key')) return { valid: false, error: data.error.message };
+      return { valid: true };
+    }
+    if (type === 'google') {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+      const data = await res.json();
+      if (data.error) return { valid: false, error: data.error.message };
+      return { valid: true };
+    }
+    if (type === 'groq') {
+      const res = await fetch('https://api.groq.com/openai/v1/models', {
+        headers: { 'Authorization': 'Bearer ' + key }
+      });
+      if (res.status === 401) return { valid: false, error: 'Geçersiz API Key' };
+      return { valid: true };
+    }
+    if (type === 'openai') {
+      const res = await fetch('https://api.openai.com/v1/models', {
+        headers: { 'Authorization': 'Bearer ' + key }
+      });
+      if (res.status === 401) return { valid: false, error: 'Geçersiz API Key' };
+      return { valid: true };
+    }
+    return { valid: false, error: 'Bilinmeyen tür' };
+  } catch (err) {
+    return { valid: false, error: 'Bağlantı hatası: ' + err.message };
+  }
 }
 
 // Premium impersonation: use admin's key but act as selected model
@@ -1277,7 +1341,22 @@ function multiReviewers(question) {
   const gemini = pick(/gemini.*(pro|flash)/) || chooseAutoModel(question);
   const claude = pick(/fable|sonnet|opus|haiku|claude/) || chooseAutoModel(question);
   const fast = pick(/nano|flash|haiku|mini/) || chooseAutoModel(question);
-  return [...new Map((short ? [gemini, fast] : [gemini, claude, fast]).filter(Boolean).map(m => [m.id, m])).values()].slice(0, 3);
+  let reviewerList = short ? [gemini, fast] : [gemini, claude, fast];
+  
+  // Add API key models as reviewers for smarter responses
+  const apiModels = getAvailableApiModels();
+  if (apiModels.length > 0) {
+    // Pick best API models (prefer Claude > GPT > Gemini > others)
+    const apiClaude = apiModels.find(m => m.apiType === 'anthropic');
+    const apiOpenai = apiModels.find(m => m.apiType === 'openai');
+    const apiGoogle = apiModels.find(m => m.apiType === 'google');
+    const apiGroq = apiModels.find(m => m.apiType === 'groq');
+    const bestApi = [apiClaude, apiOpenai, apiGoogle, apiGroq].filter(Boolean);
+    // Add up to 2 API models
+    bestApi.slice(0, 2).forEach(m => reviewerList.push(m));
+  }
+  
+  return [...new Map(reviewerList.filter(Boolean).map(m => [m.id, m])).values()].slice(0, 5);
 }
 
 async function loadModels() {
@@ -1656,16 +1735,23 @@ async function send() {
     if (isApiModel) {
       // Direct API call
       const apiModel = getAvailableApiModels().find(m => m.id === selected.id);
-      if (!apiModel) throw new Error('API modeli bulunamadı');
+      if (!apiModel) throw new Error('[API Hatası] API modeli bulunamadı. API Key ayarlarınızı kontrol edin.');
       finalText = await callApiModel(apiModel.apiKey, apiModel.apiType, apiModel.apiId, question, systemPrompt);
 
     } else if (isMulti) {
-      // MultiAI mode
+      // MultiAI mode — supports both Puter and API models
       const reviews = await Promise.allSettled(reviewers.map(async model => {
-        const answer = await readResponse(await puter.ai.chat(
-          `Kullanıcının sorusuna kısa bir uzman görüşü ver. Basit sorulara kısa cevap ver. Türkçe yanıt ver.\n\nSoru: ${question}`,
-          { model: model.id }
-        ));
+        let answer;
+        // Check if this reviewer is an API model
+        if (model.apiKey && model.apiType && model.apiId) {
+          answer = await callApiModel(model.apiKey, model.apiType, model.apiId, question, 
+            `Kullanıcının sorusuna kısa bir uzman görüşü ver. Basit sorulara kısa cevap ver. Türkçe yanıt ver.`);
+        } else {
+          answer = await readResponse(await puter.ai.chat(
+            `Kullanıcının sorusuna kısa bir uzman görüşü ver. Basit sorulara kısa cevap ver. Türkçe yanıt ver.\n\nSoru: ${question}`,
+            { model: model.id }
+          ));
+        }
         const row = flow.querySelector(`[data-model="${model.id}"]`);
         if (row) { row.classList.add('done'); row.innerHTML = `<i class="fa-solid fa-check"></i><span>${modelLabel(model)} görüşünü verdi</span>`; }
         return { model, answer };
@@ -1723,23 +1809,49 @@ async function send() {
     if (used >= getCurrentLimit() && !isAdmin()) showLimit();
 
   } catch (e) {
-    // Fallback: try premium key if available
-    const acc = currentAccount();
-    if (acc.isPremium && premiumApiKey && premiumApiKey.key) {
-      try {
-        bubble.textContent = 'Alternatif API ile deneniyor…';
-        const fallbackText = await callWithPremiumImpersonation(modelLabel(selected || active), question, systemPrompt);
-        bubble.textContent = fallbackText;
-        bubble.classList.remove('thinking');
-        used++;
-        localStorage.setItem('multiai-used', used);
-      } catch (fallbackErr) {
-        bubble.textContent = 'Yanıt alınamadı. Lütfen başka bir model deneyin veya daha sonra tekrar deneyin.';
-        bubble.classList.remove('thinking');
-      }
-    } else {
-      bubble.textContent = 'Bu modelle yanıt alınamadı. Puter hesabındaki kullanım hakkını kontrol edin veya başka model seçin.';
+    const errMsg = e?.message || String(e);
+    const isApiErr = errMsg.startsWith('[') || isApiModel;
+    
+    if (isApiErr) {
+      // API key specific error
+      bubble.textContent = `API Hatası: ${errMsg.replace(/^\[.*?\]\s*/, '')}\n\nAPI Key'inizi kontrol edin veya Ayarlar > API Key Yönetimi'nden güncelleyin.`;
       bubble.classList.remove('thinking');
+    } else {
+      // Puter model error — try fallback
+      const acc = currentAccount();
+      if (acc.isPremium && premiumApiKey && premiumApiKey.key) {
+        try {
+          bubble.textContent = 'Alternatif API ile deneniyor…';
+          const fallbackText = await callWithPremiumImpersonation(modelLabel(selected || active), question, systemPrompt);
+          bubble.textContent = fallbackText;
+          bubble.classList.remove('thinking');
+          used++;
+          localStorage.setItem('multiai-used', used);
+        } catch (fallbackErr) {
+          bubble.textContent = 'Yanıt alınamadı. Lütfen başka bir model deneyin veya API Key ekleyerek doğrudan model kullanın.';
+          bubble.classList.remove('thinking');
+        }
+      } else {
+        // Try with user API keys as fallback
+        const userApiModels = getAvailableApiModels();
+        if (userApiModels.length > 0) {
+          try {
+            bubble.textContent = 'Puter modeli yanıt veremedi, API Key ile deneniyor…';
+            const fallbackModel = userApiModels[0];
+            const fallbackText = await callApiModel(fallbackModel.apiKey, fallbackModel.apiType, fallbackModel.apiId, question, systemPrompt);
+            bubble.textContent = fallbackText;
+            bubble.classList.remove('thinking');
+            used++;
+            localStorage.setItem('multiai-used', used);
+          } catch (apiFallbackErr) {
+            bubble.textContent = `Model yanıt veremedi. Hata: ${apiFallbackErr.message?.replace(/^\[.*?\]\s*/, '') || 'Bilinmeyen hata'}\n\nBaşka bir model deneyin veya API Key ayarlarınızı kontrol edin.`;
+            bubble.classList.remove('thinking');
+          }
+        } else {
+          bubble.textContent = 'Bu modelle yanıt alınamadı. Seçenekler:\n\n1. Başka bir model seçin\n2. API Key ekleyerek doğrudan model kullanın (Ayarlar > API Key)\n3. Daha sonra tekrar deneyin';
+          bubble.classList.remove('thinking');
+        }
+      }
     }
   } finally {
     busy = false;
@@ -2297,7 +2409,7 @@ $('#saveProfile').onclick = () => {
 $('#menuApiKeyBtn').onclick = () => { renderUserApiKeys(); $('#apiKeyDialog').classList.add('show'); $('#accountMenu').classList.remove('show'); };
 $('#closeApiKeyBtn').onclick = () => $('#apiKeyDialog').classList.remove('show');
 $('#userApiKeyInput').oninput = e => renderApiKeyDetect(e.target.value, '#userApiKeyDetect');
-$('#addUserApiKey').onclick = () => {
+$('#addUserApiKey').onclick = async () => {
   const key = $('#userApiKeyInput').value.trim();
   if (!key) return;
   const detected = detectApiKeyType(key);
@@ -2309,13 +2421,32 @@ $('#addUserApiKey').onclick = () => {
   if (!acc.apiKeys) acc.apiKeys = [];
   // Check duplicate
   if (acc.apiKeys.find(ak => ak.key === key)) { showToast('Bu key zaten eklenmiş.', 'error'); return; }
+
+  // Validate API key with a real test call
+  const addBtn = $('#addUserApiKey');
+  addBtn.disabled = true;
+  addBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Doğrulanıyor...';
+  $('#userApiKeyDetect').innerHTML = '<div class="api-detect-badge detected" style="background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.2);"><i class="fa-solid fa-spinner fa-spin"></i> API Key test ediliyor...</div>';
+
+  const validation = await validateApiKey(key, detected.type);
+  
+  addBtn.disabled = false;
+  addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Ekle';
+
+  if (!validation.valid) {
+    $('#userApiKeyDetect').innerHTML = `<div class="api-detect-badge unknown"><i class="fa-solid fa-xmark-circle"></i> Geçersiz API Key: ${validation.error}</div>`;
+    showToast(`❌ API Key geçersiz: ${validation.error}`, 'error');
+    return;
+  }
+
   acc.apiKeys.push({ key, type: detected.type, name: detected.name });
   saveRegistry(reg);
   $('#userApiKeyInput').value = '';
-  $('#userApiKeyDetect').innerHTML = '';
-  showToast(`✅ ${detected.name} API Key eklendi!`, 'success');
+  $('#userApiKeyDetect').innerHTML = '<div class="api-detect-badge detected"><i class="fa-solid fa-check-circle"></i> API Key doğrulandı ve eklendi!</div>';
+  showToast(`✅ ${detected.name} API Key doğrulandı ve eklendi!`, 'success');
   renderUserApiKeys();
   renderModels($('#modelSearch')?.value || '');
+  setTimeout(() => { $('#userApiKeyDetect').innerHTML = ''; }, 3000);
 };
 
 // Model panel
