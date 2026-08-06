@@ -2224,7 +2224,8 @@ $$('.mode-btn').forEach(btn => {
 });
 
 // Admin
-$('#menuAdminBtn').onclick = () => {
+$('#menuAdminBtn').onclick = async () => {
+  await loadRegistry();
   renderAdminPanel();
   $('#adminDialog').classList.add('show');
   $('#accountMenu').classList.remove('show');
