@@ -987,23 +987,28 @@ async function callWithPremiumImpersonation(selectedModelName, question, systemP
 }
 
 // ===== REGISTRY =====
+const GLOBAL_DB_URL = 'https://extendsclass.com/api/json-storage/bin/ababfbd';
+const GLOBAL_DB_KEY = 'MultiAI_Admin_Secret_2026';
+
 async function loadRegistry() {
   try {
-    const kvReg = await puter.kv.get('multiai-user-registry');
-    if (kvReg) {
-      localRegistry = JSON.parse(kvReg);
-      // Ensure all users have required fields
-      localRegistry.forEach(u => {
-        if (!u.apiKeys) u.apiKeys = [];
-        if (!u.profileColor) u.profileColor = '#e7e4db';
-        if (u.createdAt === undefined) u.createdAt = Date.now();
-        // Fix for previous bug where anyone became admin
-        if (u.role === 'Admin' && u.name !== 'Admin') u.role = 'User';
-      });
-      return;
+    const res = await fetch(GLOBAL_DB_URL);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        localRegistry = data;
+        localRegistry.forEach(u => {
+          if (!u.apiKeys) u.apiKeys = [];
+          if (!u.profileColor) u.profileColor = '#e7e4db';
+          if (u.createdAt === undefined) u.createdAt = Date.now();
+          if (u.role === 'Admin' && u.name !== 'Admin') u.role = 'User';
+        });
+        return;
+      }
     }
-  } catch (e) {}
-  // First time: create only the real user
+  } catch (e) { console.error('DB Load Error', e); }
+  
+  // First time fallback
   const defaultName = nameFor();
   localRegistry = [
     {
@@ -1018,7 +1023,13 @@ async function loadRegistry() {
       createdAt: Date.now()
     }
   ];
-  try { await puter.kv.set('multiai-user-registry', JSON.stringify(localRegistry)); } catch (e) {}
+  try {
+    await fetch(GLOBAL_DB_URL, {
+      method: 'PUT',
+      headers: { 'Security-key': GLOBAL_DB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(localRegistry)
+    });
+  } catch (e) {}
 }
 
 async function loadPremiumApiKey() {
@@ -1037,7 +1048,13 @@ function getRegistry() { return localRegistry; }
 
 async function saveRegistry(reg) {
   localRegistry = reg;
-  try { await puter.kv.set('multiai-user-registry', JSON.stringify(reg)); } catch (e) {}
+  try {
+    await fetch(GLOBAL_DB_URL, {
+      method: 'PUT',
+      headers: { 'Security-key': GLOBAL_DB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(reg)
+    });
+  } catch (e) { console.error('DB Save Error', e); }
 }
 
 function getUserByExactName(name) {
