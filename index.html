@@ -79,10 +79,10 @@ button,input,textarea{font:inherit}
 .theme-toggle{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center;transition:.2s}
 .theme-toggle:hover{color:var(--accent);background:var(--hover-bg);transform:rotate(15deg)}
 
-.new-chat{margin:27px 0 18px;background:#242522;color:#f3f0eb;border:1px solid transparent;border-radius:10px;padding:11px 10px;text-align:left;font-size:16px;cursor:pointer;transition:.25s}
-.new-chat i{width:25px;height:25px;border-radius:50%;background:#363734;display:inline-grid;place-items:center;color:var(--accent2);margin-right:10px}
-.new-chat:hover{border-color:#4d443e;background:#2b2c28;transform:translateX(3px)}
-[data-theme="light"] .new-chat{background:var(--surface);color:var(--text)}
+.new-chat{margin:27px 0 18px;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px 14px;text-align:left;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px}
+.new-chat i{font-size:16px;color:var(--muted)}
+.new-chat:hover{background:var(--hover-bg);border-color:var(--accent);color:var(--accent)}
+.new-chat:hover i{color:var(--accent)}
 
 .sidebar-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;margin:18px 0 8px}
 .history{display:flex;flex-direction:column;gap:4px;overflow:auto;padding-right:4px}
@@ -101,27 +101,21 @@ button,input,textarea{font:inherit}
 .account-area{position:relative;margin-top:auto;border-top:1px solid var(--line);padding-top:15px}
 .account{display:flex;gap:11px;align-items:center;padding:8px;border-radius:10px;cursor:pointer;transition:.15s}
 .account:hover{background:var(--hover-bg)}
-.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#e7e4db;color:#222421;font-weight:700;font-size:14px;transition:.2s}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#e7e4db;color:#222421;font-weight:700;font-size:14px;transition:.2s;flex-shrink:0}
 .who{min-width:0;flex:1}
 .who b,.who small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .who small{color:var(--muted);font-size:12px;margin-top:3px}
-.account-menu{display:none;position:absolute;bottom:75px;left:0;right:0;padding:6px;border-radius:14px;border:1px solid var(--card-border);background:var(--card-bg);box-shadow:0 18px 45px #000a;animation:slideUp .2s ease}
+.account-menu{display:none;position:absolute;bottom:75px;left:0;right:0;padding:8px;border-radius:12px;border:1px solid var(--line);background:var(--surface);box-shadow:0 12px 30px rgba(0,0,0,0.4);animation:slideUp .2s ease;z-index:100}
+[data-theme="light"] .account-menu{box-shadow:0 12px 30px rgba(0,0,0,0.1)}
 .account-menu.show{display:block}
-.account-menu button{display:block;width:100%;border:0;background:transparent;color:var(--text);padding:10px;border-radius:8px;text-align:left;cursor:pointer;transition:.15s}
+.account-menu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:var(--text);padding:10px 12px;border-radius:8px;text-align:left;cursor:pointer;transition:.15s;font-size:14px;font-weight:500}
+.account-menu button i{width:16px;text-align:center;color:var(--muted)}
 .account-menu button:hover{background:var(--hover-bg)}
-.account-menu .upgrade{background:#3a2a25;color:#ffb79d}
-[data-theme="light"] .account-menu .upgrade{background:#f5ddd5}
+.account-menu .upgrade{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.05));color:#fbbf24;margin-bottom:4px;border:1px solid rgba(251,191,36,0.2)}
+.account-menu .upgrade i{color:#fbbf24}
 
 /* ===== MAIN AREA ===== */
 .main{display:flex;flex-direction:column;min-width:0;height:100vh}
-.topbar{height:65px;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:15px;border-bottom:1px solid var(--line);transition:border-color .3s}
-.plan{border-radius:11px;background:var(--input-bg);border:1px solid var(--input-border);padding:10px 13px;color:var(--muted);font-size:14px;transition:.3s}
-.plan button{border:0;background:transparent;color:var(--accent2);cursor:pointer;text-decoration:underline;font-weight:600}
-.topbar-actions{display:flex;gap:8px;align-items:center}
-.top-admin-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f59e0b,#d97706);border:1px solid #fbbf24;color:#fff;padding:7px 14px;border-radius:9px;cursor:pointer;font-weight:700;font-size:13px;box-shadow:0 4px 15px rgba(245,158,11,0.35);transition:.2s}
-.top-admin-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,158,11,0.5)}
-.top-switch-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:7px 13px;border-radius:9px;cursor:pointer;font-weight:600;font-size:13px;transition:.2s}
-.top-switch-btn:hover{background:var(--hover-bg);transform:translateY(-1px)}
 
 /* ===== WORKSPACE ===== */
 .workspace{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;padding:20px 20px 0 20px;overflow:hidden}
@@ -439,32 +433,24 @@ button,input,textarea{font:inherit}
       <div class="who">
         <b id="accountName">Puter hesabı</b>
         <small id="accountPlan">Free plan</small>
+        <div id="quota" style="color:var(--accent);font-size:11px;font-weight:700;margin-top:4px;">20 / 20 mesaj kaldı</div>
       </div>
-      <i class="fa-solid fa-chevron-up"></i>
+      <i class="fa-solid fa-chevron-up" style="color:var(--muted);font-size:12px;"></i>
     </div>
     <div class="account-menu" id="accountMenu">
       <button class="upgrade" id="upgradeAccount"><i class="fa-solid fa-bolt"></i> Planı yükselt</button>
-      <button id="menuAdminBtn" style="display:none;color:#ffd700;"><i class="fa-solid fa-crown"></i> Admin Paneli</button>
+      <button id="menuAdminBtn" style="display:none;color:#fbbf24;"><i class="fa-solid fa-crown" style="color:#fbbf24"></i> Admin Paneli</button>
+      <button id="switchAccount"><i class="fa-solid fa-users"></i> Hesap Değiştir</button>
       <button id="menuProfileBtn"><i class="fa-solid fa-user"></i> Profil</button>
       <button id="menuApiKeyBtn"><i class="fa-solid fa-key"></i> API Key Ekle</button>
       <button id="changeName"><i class="fa-solid fa-pen"></i> Görünen adı değiştir</button>
-      <button id="switchAccount"><i class="fa-solid fa-repeat"></i> Hesap değiştir</button>
+      <div style="height:1px;background:var(--line);margin:6px 0;"></div>
       <button id="signOut"><i class="fa-solid fa-right-from-bracket"></i> Çıkış yap</button>
     </div>
   </div>
 </aside>
 
 <main class="main">
-  <header class="topbar">
-    <div class="plan">
-      <span id="quota">20 / 20 mesaj kaldı</span> · <button id="upgrade">Planı yükselt</button>
-    </div>
-    <div class="topbar-actions">
-      <button class="top-admin-btn" id="topAdminBtn" style="display:none;" title="Admin Paneli"><i class="fa-solid fa-crown"></i> Admin Paneli</button>
-      <button class="top-switch-btn" id="topSwitchBtn" title="Hesap Değiştir"><i class="fa-solid fa-users"></i> Hesaplar</button>
-    </div>
-  </header>
-
   <div class="workspace">
     <div class="welcome" id="welcome">
       <h1>Bugün neyi birlikte çözelim?</h1>
@@ -1158,10 +1144,8 @@ function updateUI() {
   $('#prompt').placeholder = (ended && !isAdmin()) ? 'Limitiniz sona erdi — planınızı yükseltin' : 'MultiAI\'a bir şey sor…';
 
   // Admin buttons
-  const topAdm = $('#topAdminBtn');
   const menuAdm = $('#menuAdminBtn');
-  if (topAdm) topAdm.style.display = isAdmin() ? 'inline-flex' : 'none';
-  if (menuAdm) menuAdm.style.display = isAdmin() ? 'block' : 'none';
+  if (menuAdm) menuAdm.style.display = isAdmin() ? 'flex' : 'none';
 }
 
 // ===== MODE SYSTEM =====
@@ -2250,7 +2234,7 @@ $$('.mode-btn').forEach(btn => {
 });
 
 // Admin
-$('#topAdminBtn').onclick = $('#menuAdminBtn').onclick = () => {
+$('#menuAdminBtn').onclick = () => {
   renderAdminPanel();
   $('#adminDialog').classList.add('show');
   $('#accountMenu').classList.remove('show');
@@ -2277,7 +2261,6 @@ $('#saveAdminApiKey').onclick = async () => {
 
 // Switcher
 $('#switchAccount').onclick = () => { renderSwitcher(); $('#switcherDialog').classList.add('show'); $('#accountMenu').classList.remove('show'); };
-$('#topSwitchBtn').onclick = () => { renderSwitcher(); $('#switcherDialog').classList.add('show'); };
 $('#closeSwitcherBtn').onclick = () => $('#switcherDialog').classList.remove('show');
 
 // Create account
