@@ -70,19 +70,15 @@ button,input,textarea{font:inherit}
 .sidebar{background:linear-gradient(180deg,#1c1d1b,#171817);border-right:1px solid var(--line);padding:20px;display:flex;flex-direction:column;transition:background .3s}
 [data-theme="light"] .sidebar{background:linear-gradient(180deg,var(--side),#e0dfdb)}
 .sidebar-top{display:flex;justify-content:space-between;align-items:center}
-.brand{display:flex;align-items:center;gap:10px;font:30px 'Instrument Serif';letter-spacing:-.04em}
-.brand-orb{width:29px;height:29px;border-radius:10px;background:conic-gradient(from 220deg,#ffb386,#e67d58,#9b7cf0,#5fe5cf,#ffb386);box-shadow:0 0 0 1px #ffffff22,0 0 24px #e67d5860;animation:orbSpin 8s linear infinite}
-.brand span:last-child{background:linear-gradient(100deg,#fff7ea,#edb99d);-webkit-background-clip:text;background-clip:text;color:transparent}
-[data-theme="light"] .brand span:last-child{background:linear-gradient(100deg,#3a3a38,#7a5a4a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand{display:flex;align-items:center;gap:10px;font:22px 'Instrument Serif';letter-spacing:-.02em;color:var(--text)}
 
 .sidebar-actions{display:flex;gap:6px;align-items:center}
 .theme-toggle{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center;transition:.2s}
 .theme-toggle:hover{color:var(--accent);background:var(--hover-bg);transform:rotate(15deg)}
 
-.new-chat{margin:27px 0 18px;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px 14px;text-align:left;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px}
-.new-chat i{font-size:16px;color:var(--muted)}
-.new-chat:hover{background:var(--hover-bg);border-color:var(--accent);color:var(--accent)}
-.new-chat:hover i{color:var(--accent)}
+.new-chat{margin:18px 0;background:transparent;color:var(--text);border:1px solid transparent;border-radius:8px;padding:8px 10px;text-align:left;font-size:14px;font-weight:500;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:10px}
+.new-chat i{font-size:15px;color:var(--text)}
+.new-chat:hover{background:var(--hover-bg)}
 
 .sidebar-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;margin:18px 0 8px}
 .history{display:flex;flex-direction:column;gap:4px;overflow:auto;padding-right:4px}
@@ -419,21 +415,23 @@ button,input,textarea{font:inherit}
 <div class="app" id="app">
 <aside class="sidebar">
   <div class="sidebar-top">
-    <div class="brand"><span class="brand-orb"></span><span>MultiAI</span></div>
+    <div class="brand"><span>MultiAI</span></div>
     <div class="sidebar-actions">
-      <button class="theme-toggle" id="themeToggle" title="Tema değiştir"><i class="fa-solid fa-sun"></i></button>
+      <button class="theme-toggle" id="themeToggle" title="Tema değiştir"><i class="fa-solid fa-moon"></i></button>
     </div>
   </div>
-  <button class="new-chat" id="newChat"><i class="fa-solid fa-plus"></i>Yeni sohbet</button>
-  <div class="sidebar-title">SON SOHBETLER</div>
+  <button class="new-chat" id="newChat">
+    <i class="fa-solid fa-pen-to-square"></i>
+    Yeni sohbet
+  </button>
+  <div class="sidebar-title">Bugün</div>
   <div class="history" id="history"></div>
   <div class="account-area">
     <div class="account" id="account">
       <div class="avatar" id="avatar">P</div>
       <div class="who">
-        <b id="accountName">Puter hesabı</b>
-        <small id="accountPlan">Free plan</small>
-        <div id="quota" style="color:var(--accent);font-size:11px;font-weight:700;margin-top:4px;">20 / 20 mesaj kaldı</div>
+        <b id="accountName" style="font-size:13px;">Puter hesabı</b>
+        <small id="accountPlan" style="font-size:12px;margin-top:0;">Free plan</small>
       </div>
       <i class="fa-solid fa-chevron-up" style="color:var(--muted);font-size:12px;"></i>
     </div>
@@ -1104,32 +1102,23 @@ function updateUI() {
     localStorage.setItem('multiai-reset-at', String(resetAt));
   }
 
-  const quotaEl = $('#quota');
-  if (isAdmin()) {
-    quotaEl.innerHTML = `<b>Yönetici</b> · <span style="color:var(--green);">Sınırsız</span>`;
-  } else if (acc.isPremium) {
-    quotaEl.innerHTML = `⭐ <b>${left} / ${userLimit}</b> mesaj <span style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;margin-left:6px;">PREMIUM</span>`;
-  } else {
-    quotaEl.textContent = ended ? 'Limitiniz sona erdi — ' + timeLeft() + ' sonra yenilenir' : `${left} / ${userLimit} mesaj kaldı`;
-  }
-
   // Account name & plan
   const accNameEl = $('#accountName');
   if (isAdmin()) {
-    accNameEl.innerHTML = `${escHtml(acc.name)} <span style="color:#ffd700;" title="Yönetici">👑</span>`;
+    accNameEl.innerHTML = `${escHtml(acc.name)} <span style="color:#fbbf24;" title="Yönetici">👑</span>`;
   } else if (acc.isPremium) {
-    accNameEl.innerHTML = `${escHtml(acc.name)} <span style="color:#ffd700;" title="Premium">⭐</span>`;
+    accNameEl.innerHTML = `${escHtml(acc.name)} <span style="color:#fbbf24;" title="Premium">⭐</span>`;
   } else {
     accNameEl.textContent = acc.name;
   }
 
   const planEl = $('#accountPlan');
   if (isAdmin()) {
-    planEl.innerHTML = `<span style="color:#ffd700;font-weight:700;">👑 Yönetici · Sınırsız</span>`;
+    planEl.innerHTML = `<span style="color:var(--muted);">Yönetici · Sınırsız</span>`;
   } else if (acc.isPremium) {
-    planEl.innerHTML = `<span style="color:#ffd700;font-weight:700;">⭐ Premium · ${left} mesaj</span>`;
+    planEl.innerHTML = `<span style="color:var(--muted);">Premium · ${left}/${userLimit} mesaj</span>`;
   } else {
-    planEl.textContent = ended ? 'Free plan · Limit sona erdi' : `Free plan · ${left} mesaj`;
+    planEl.textContent = ended ? 'Free plan · Limit sona erdi' : `Free plan · ${left}/${userLimit} mesaj`;
   }
 
   // Avatar
@@ -2216,7 +2205,8 @@ $('#prompt').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preven
 
 // Navigation
 $('#newChat').onclick = fresh;
-$('#upgrade').onclick = $('#upgradeAccount').onclick = upgrade;
+if ($('#upgrade')) $('#upgrade').onclick = upgrade;
+$('#upgradeAccount').onclick = upgrade;
 
 // Account menu
 $('#account').onclick = () => $('#accountMenu').classList.toggle('show');
