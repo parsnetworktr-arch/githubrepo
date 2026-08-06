@@ -66,6 +66,7 @@ button,input,textarea{font:inherit}
 /* ===== APP LAYOUT ===== */
 .app{display:none;grid-template-columns:360px minmax(0,1fr);height:100vh}
 .app.ready{display:grid;animation:fadeIn .4s}
+.app.preview-open{grid-template-columns:360px minmax(0,1fr) 480px}
 .sidebar{background:linear-gradient(180deg,#1c1d1b,#171817);border-right:1px solid var(--line);padding:20px;display:flex;flex-direction:column;transition:background .3s}
 [data-theme="light"] .sidebar{background:linear-gradient(180deg,var(--side),#e0dfdb)}
 .sidebar-top{display:flex;justify-content:space-between;align-items:center}
@@ -123,7 +124,7 @@ button,input,textarea{font:inherit}
 .top-switch-btn:hover{background:var(--hover-bg);transform:translateY(-1px)}
 
 /* ===== WORKSPACE ===== */
-.workspace{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;padding:20px}
+.workspace{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;padding:20px;overflow:hidden}
 .welcome{text-align:center;margin-bottom:32px;animation:slideUp .5s ease;margin-top:auto}
 .welcome h1{font:clamp(42px,5vw,64px)/1.04 'Instrument Serif';color:var(--text);letter-spacing:-.045em;margin:0}
 .welcome p{margin:13px 0 0;color:var(--muted)}
@@ -136,7 +137,7 @@ button,input,textarea{font:inherit}
 .mode-btn i{font-size:12px}
 
 /* ===== CONVERSATION ===== */
-.conversation{display:none;align-self:stretch;max-width:900px;flex:1;overflow:auto;padding:25px 3px}
+.conversation{display:none;align-self:stretch;max-width:900px;width:100%;flex:1;overflow-y:auto;overflow-x:hidden;padding:25px 3px;scroll-behavior:smooth}
 .message{display:flex;gap:12px;margin-bottom:24px;animation:slideUp .3s ease}
 .message.user{justify-content:flex-end}
 .bubble{max-width:78%;line-height:1.7;white-space:pre-wrap;word-break:break-word}
@@ -145,6 +146,50 @@ button,input,textarea{font:inherit}
 .ai-avatar{width:31px;height:31px;border-radius:9px;background:var(--accent);display:grid;place-items:center;flex:none;color:#fff;font-size:13px}
 .thinking{color:var(--muted);font-style:italic}
 .message-model{font:700 11px Inter;color:#ecaa8b;letter-spacing:.02em;margin:3px 0 4px}
+
+/* ===== CODE FILE CARD ===== */
+.code-file-card{display:flex;align-items:center;gap:14px;background:#1e1f1d;border:1px solid #3a3b37;border-radius:14px;padding:14px 18px;margin-top:12px;cursor:pointer;transition:all .25s ease;max-width:480px;animation:slideUp .3s ease}
+.code-file-card:hover{border-color:var(--accent);background:#252623;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+[data-theme="light"] .code-file-card{background:#f5f4f0;border-color:#d8d7d3}
+[data-theme="light"] .code-file-card:hover{background:#eae9e5;border-color:var(--accent)}
+.code-file-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#2a2b28,#1a1b18);border:1px solid #4a4b47;display:grid;place-items:center;flex-shrink:0;font-size:20px;color:var(--accent);transition:.2s}
+[data-theme="light"] .code-file-icon{background:linear-gradient(135deg,#e8e7e3,#d8d7d3);border-color:#c8c7c3}
+.code-file-card:hover .code-file-icon{transform:scale(1.05);border-color:var(--accent)}
+.code-file-info{flex:1;min-width:0}
+.code-file-name{font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.code-file-meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:6px}
+.code-file-meta .lang-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.lang-dot.html{background:#e44d26}
+.lang-dot.css{background:#264de4}
+.lang-dot.js,.lang-dot.javascript{background:#f7df1e}
+.lang-dot.python{background:#3776ab}
+.lang-dot.java{background:#ed8b00}
+.lang-dot.default{background:var(--accent)}
+.code-file-actions{display:flex;gap:6px;flex-shrink:0}
+.code-file-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:9px;padding:7px 13px;cursor:pointer;font-size:12px;font-weight:600;transition:.2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.code-file-btn:hover{background:var(--hover-bg);border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.code-file-btn.preview-btn{background:linear-gradient(135deg,rgba(230,125,88,.12),rgba(230,125,88,.05));border-color:rgba(230,125,88,.3);color:var(--accent)}
+.code-file-btn.preview-btn:hover{background:linear-gradient(135deg,rgba(230,125,88,.25),rgba(230,125,88,.1));box-shadow:0 4px 12px rgba(230,125,88,.2)}
+
+/* ===== PREVIEW PANEL ===== */
+.preview-panel{display:none;flex-direction:column;background:var(--bg);border-left:1px solid var(--line);height:100vh;overflow:hidden;animation:panelSlideIn .35s ease}
+.app.preview-open .preview-panel{display:flex}
+.preview-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--surface);flex-shrink:0}
+.preview-header-info{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.preview-header-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2a2b28,#1a1b18);border:1px solid #4a4b47;display:grid;place-items:center;font-size:13px;color:var(--accent);flex-shrink:0}
+[data-theme="light"] .preview-header-icon{background:linear-gradient(135deg,#e8e7e3,#d8d7d3);border-color:#c8c7c3}
+.preview-header-title{font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-header-actions{display:flex;gap:6px;flex-shrink:0}
+.preview-action-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center;transition:.2s}
+.preview-action-btn:hover{color:var(--accent);background:var(--hover-bg);border-color:var(--accent)}
+.preview-body{flex:1;overflow:hidden;position:relative;background:#fff}
+.preview-iframe{width:100%;height:100%;border:0;background:#fff}
+.preview-code-view{width:100%;height:100%;overflow:auto;padding:20px;background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-all}
+.preview-tabs{display:flex;gap:2px;padding:8px 18px 0;background:var(--surface);border-bottom:1px solid var(--line)}
+.preview-tab{padding:8px 16px;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;transition:.2s}
+.preview-tab:hover{color:var(--text);background:var(--hover-bg)}
+.preview-tab.active{background:var(--bg);color:var(--accent);border-color:var(--line)}
+@keyframes panelSlideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
 /* ===== MULTI FLOW ===== */
 .multi-flow{width:min(650px,100%);border:1px solid #4a4038;background:linear-gradient(120deg,#2d2723,#252629);border-radius:13px;padding:12px 13px;margin:0 0 20px 43px;animation:slideUp .25s}
@@ -170,6 +215,10 @@ button,input,textarea{font:inherit}
 .send{border:0;width:38px;height:38px;border-radius:12px;background:var(--accent);color:#fff;cursor:pointer;font-size:16px;transition:.2s}
 .send:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 9px 18px #e67d5844}
 .send:disabled{opacity:.4;cursor:not-allowed}
+.send.stop-mode{background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:12px;animation:stopPulse 1.5s ease-in-out infinite}
+.send.stop-mode:hover{transform:translateY(-2px);box-shadow:0 9px 18px rgba(239,68,68,.4)}
+.send.stop-mode i{font-size:14px}
+@keyframes stopPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 
 /* ===== CHIPS ===== */
 .chips{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-top:17px}
@@ -470,6 +519,29 @@ button,input,textarea{font:inherit}
     </div>
   </div>
 </main>
+
+<!-- Preview Panel -->
+<aside class="preview-panel" id="previewPanel">
+  <div class="preview-header">
+    <div class="preview-header-info">
+      <div class="preview-header-icon"><i class="fa-solid fa-code"></i></div>
+      <span class="preview-header-title" id="previewTitle">Önizleme</span>
+    </div>
+    <div class="preview-header-actions">
+      <button class="preview-action-btn" id="previewDownloadBtn" title="İndir"><i class="fa-solid fa-download"></i></button>
+      <button class="preview-action-btn" id="previewNewTabBtn" title="Yeni sekmede aç"><i class="fa-solid fa-up-right-from-square"></i></button>
+      <button class="preview-action-btn" id="previewCloseBtn" title="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <div class="preview-tabs" id="previewTabs">
+    <button class="preview-tab active" data-tab="preview"><i class="fa-solid fa-eye"></i> Önizleme</button>
+    <button class="preview-tab" data-tab="code"><i class="fa-solid fa-code"></i> Kod</button>
+  </div>
+  <div class="preview-body" id="previewBody">
+    <iframe class="preview-iframe" id="previewIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+    <pre class="preview-code-view" id="previewCodeView" style="display:none;"></pre>
+  </div>
+</aside>
 </div>
 
 <!-- Logo Flight Animation -->
@@ -706,6 +778,8 @@ let currentMode = localStorage.getItem('multiai-mode') || 'normal';
 let localRegistry = [];
 let premiumApiKey = null; // { key, type, name }
 let pendingSwitchTarget = null; // for password verify flow
+let abortController = null; // for stopping generation
+let stopRequested = false; // flag to stop generation
 
 // ===== UTILITY =====
 const escHtml = s => String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -875,6 +949,8 @@ async function loadRegistry() {
         if (!u.apiKeys) u.apiKeys = [];
         if (!u.profileColor) u.profileColor = '#e7e4db';
         if (u.createdAt === undefined) u.createdAt = Date.now();
+        // Fix for previous bug where anyone became admin
+        if (u.role === 'Admin' && u.name !== 'Admin') u.role = 'User';
       });
       return;
     }
@@ -887,7 +963,7 @@ async function loadRegistry() {
       isPremium: false,
       limit: FREE_LIMIT,
       used: Number(localStorage.getItem('multiai-used') || 0),
-      role: 'Admin', // First user is admin
+      role: defaultName === 'Admin' ? 'Admin' : 'User',
       passwordHash: null,
       profileColor: '#e67d58',
       apiKeys: [],
@@ -930,7 +1006,7 @@ function ensureCurrentAccountInRegistry() {
       isPremium: false,
       limit: FREE_LIMIT,
       used: Number(localStorage.getItem('multiai-used') || 0),
-      role: reg.length === 0 ? 'Admin' : 'User',
+      role: currentName === 'Admin' ? 'Admin' : 'User',
       passwordHash: null,
       profileColor: PROFILE_COLORS[Math.floor(Math.random() * PROFILE_COLORS.length)],
       apiKeys: [],
@@ -1012,7 +1088,8 @@ function updateUI() {
   if (acc.profileColor) avatarEl.style.background = acc.profileColor;
 
   // Controls
-  $('#send').disabled = busy || (ended && !isAdmin());
+  $('#send').disabled = (ended && !isAdmin());
+  if (!busy) $('#send').disabled = (ended && !isAdmin());
   $('#prompt').disabled = busy || (ended && !isAdmin());
   $('#prompt').placeholder = (ended && !isAdmin()) ? 'Limitiniz sona erdi — planınızı yükseltin' : 'MultiAI\'a bir şey sor…';
 
@@ -1283,15 +1360,210 @@ function loadChat(id) {
 }
 
 // ===== CHAT =====
+
+// Parse code blocks from AI response
+function parseCodeBlocks(text) {
+  const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+  const blocks = [];
+  let lastIndex = 0;
+  let plainText = '';
+  let match;
+  
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    plainText += text.slice(lastIndex, match.index);
+    blocks.push({
+      language: match[1] || 'text',
+      code: match[2].trim()
+    });
+    lastIndex = match.index + match[0].length;
+  }
+  plainText += text.slice(lastIndex);
+  
+  return { plainText: plainText.trim(), blocks };
+}
+
+function getLangDisplayName(lang) {
+  const map = {
+    'html': 'HTML', 'css': 'CSS', 'js': 'JavaScript', 'javascript': 'JavaScript',
+    'python': 'Python', 'py': 'Python', 'java': 'Java', 'cpp': 'C++', 'c': 'C',
+    'typescript': 'TypeScript', 'ts': 'TypeScript', 'json': 'JSON', 'xml': 'XML',
+    'sql': 'SQL', 'bash': 'Bash', 'sh': 'Shell', 'php': 'PHP', 'ruby': 'Ruby',
+    'go': 'Go', 'rust': 'Rust', 'swift': 'Swift', 'kotlin': 'Kotlin', 'text': 'Text'
+  };
+  return map[lang.toLowerCase()] || lang.toUpperCase();
+}
+
+function getLangExtension(lang) {
+  const map = {
+    'html': '.html', 'css': '.css', 'js': '.js', 'javascript': '.js',
+    'python': '.py', 'py': '.py', 'java': '.java', 'cpp': '.cpp', 'c': '.c',
+    'typescript': '.ts', 'ts': '.ts', 'json': '.json', 'xml': '.xml',
+    'sql': '.sql', 'bash': '.sh', 'sh': '.sh', 'php': '.php', 'ruby': '.rb',
+    'go': '.go', 'rust': '.rs', 'swift': '.swift', 'kotlin': '.kt', 'text': '.txt'
+  };
+  return map[lang.toLowerCase()] || '.txt';
+}
+
+function getLangDotClass(lang) {
+  const l = lang.toLowerCase();
+  if (['html', 'css', 'js', 'javascript', 'python', 'java'].includes(l)) return l;
+  return 'default';
+}
+
+// Try to extract a meaningful filename from code content
+function guessFileName(code, lang) {
+  const l = lang.toLowerCase();
+  // Try to extract title from HTML
+  if (l === 'html') {
+    const titleMatch = code.match(/<title>([^<]+)<\/title>/i);
+    if (titleMatch) return titleMatch[1].trim().replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s-_]/g, '').trim().replace(/\s+/g, '_') || 'index';
+    return 'index';
+  }
+  if (l === 'css') return 'style';
+  if (l === 'js' || l === 'javascript') return 'script';
+  if (l === 'python' || l === 'py') return 'main';
+  return 'code';
+}
+
+function createFileCard(code, language, container) {
+  const fileName = guessFileName(code, language);
+  const ext = getLangExtension(language);
+  const displayName = getLangDisplayName(language);
+  const dotClass = getLangDotClass(language);
+  const isPreviewable = ['html'].includes(language.toLowerCase());
+
+  const card = document.createElement('div');
+  card.className = 'code-file-card';
+  card.innerHTML = `
+    <div class="code-file-icon"><i class="fa-solid fa-code"></i></div>
+    <div class="code-file-info">
+      <div class="code-file-name">${escHtml(fileName)}${ext}</div>
+      <div class="code-file-meta">
+        <span class="lang-dot ${dotClass}"></span>
+        <span>Code · ${displayName}</span>
+      </div>
+    </div>
+    <div class="code-file-actions">
+      ${isPreviewable ? '<button class="code-file-btn preview-btn" title="Önizle"><i class="fa-solid fa-eye"></i> Önizle</button>' : ''}
+      <button class="code-file-btn download-btn" title="İndir"><i class="fa-solid fa-download"></i> İndir</button>
+    </div>`;
+
+  // Preview button
+  const previewBtn = card.querySelector('.preview-btn');
+  if (previewBtn) {
+    previewBtn.onclick = (e) => {
+      e.stopPropagation();
+      openPreview(code, language, fileName + ext);
+    };
+  }
+
+  // Download button
+  card.querySelector('.download-btn').onclick = (e) => {
+    e.stopPropagation();
+    downloadCode(code, fileName + ext);
+  };
+
+  // Card click also opens preview for HTML, code view for others
+  card.onclick = () => {
+    openPreview(code, language, fileName + ext);
+  };
+
+  container.appendChild(card);
+}
+
+// Preview panel
+let currentPreviewCode = '';
+let currentPreviewFilename = '';
+
+function openPreview(code, language, filename) {
+  currentPreviewCode = code;
+  currentPreviewFilename = filename;
+  const app = $('#app');
+  const panel = $('#previewPanel');
+  const iframe = $('#previewIframe');
+  const codeView = $('#previewCodeView');
+  const title = $('#previewTitle');
+  const tabs = $('#previewTabs');
+  
+  title.textContent = filename;
+  app.classList.add('preview-open');
+
+  const isHtml = language.toLowerCase() === 'html';
+
+  // Reset tabs
+  $$('#previewTabs .preview-tab').forEach(t => t.classList.remove('active'));
+  
+  if (isHtml) {
+    // Show preview tab active
+    tabs.querySelector('[data-tab="preview"]').classList.add('active');
+    iframe.style.display = 'block';
+    codeView.style.display = 'none';
+    // Write HTML to iframe
+    iframe.srcdoc = code;
+  } else {
+    // Show code tab active
+    tabs.querySelector('[data-tab="code"]').classList.add('active');
+    iframe.style.display = 'none';
+    codeView.style.display = 'block';
+    codeView.textContent = code;
+  }
+
+  // Scroll conversation to see the card
+  setTimeout(() => {
+    $('#conversation').scrollTop = $('#conversation').scrollHeight;
+  }, 100);
+}
+
+function closePreview() {
+  $('#app').classList.remove('preview-open');
+  $('#previewIframe').srcdoc = '';
+  currentPreviewCode = '';
+  currentPreviewFilename = '';
+}
+
+function downloadCode(code, filename) {
+  const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`✅ ${filename} indirildi`, 'success');
+}
+
 function addMessage(role, text, model = '') {
   const item = document.createElement('div');
   item.className = 'message ' + role;
-  item.innerHTML = role === 'assistant'
-    ? `<div class="ai-avatar">✦</div><div><div class="message-model">${model || 'MultiAI'}</div><div class="bubble"></div></div>`
-    : '<div class="bubble"></div>';
-  item.querySelector('.bubble').textContent = text;
+  
+  if (role === 'assistant') {
+    item.innerHTML = `<div class="ai-avatar">✦</div><div style="flex:1;min-width:0;"><div class="message-model">${model || 'MultiAI'}</div><div class="bubble"></div><div class="file-cards-container"></div></div>`;
+    
+    // Parse code blocks
+    const { plainText, blocks } = parseCodeBlocks(text);
+    
+    if (blocks.length > 0) {
+      // Show plain text in bubble
+      item.querySelector('.bubble').textContent = plainText || 'İşte oluşturduğum kod:';
+      // Create file cards for each code block
+      const container = item.querySelector('.file-cards-container');
+      blocks.forEach(block => createFileCard(block.code, block.language, container));
+    } else {
+      item.querySelector('.bubble').textContent = text;
+    }
+  } else {
+    item.innerHTML = '<div class="bubble"></div>';
+    item.querySelector('.bubble').textContent = text;
+  }
+  
   $('#conversation').append(item);
-  $('#conversation').scrollTop = $('#conversation').scrollHeight;
+  // Reliable scroll to bottom
+  requestAnimationFrame(() => {
+    const conv = $('#conversation');
+    conv.scrollTop = conv.scrollHeight;
+  });
   return item.querySelector('.bubble');
 }
 
@@ -1316,7 +1588,10 @@ function showLimit() {
 async function readResponse(response) {
   if (response?.[Symbol.asyncIterator]) {
     let out = '';
-    for await (const part of response) out += part?.text || '';
+    for await (const part of response) {
+      if (stopRequested) break;
+      out += part?.text || '';
+    }
     return out;
   }
   return response?.message?.content || response?.text || String(response);
@@ -1348,7 +1623,9 @@ async function send() {
   localStorage.setItem('multiai-chats', JSON.stringify(chats));
   renderHistory();
   busy = true;
+  stopRequested = false;
   updateUI();
+  showStopButton();
 
   const modeConfig = MODE_CONFIG[currentMode];
   const systemPrompt = modeConfig.systemPrompt;
@@ -1413,8 +1690,27 @@ async function send() {
       ));
     }
 
-    bubble.textContent = finalText;
+    // Parse and render the final response with file cards
+    const { plainText: finalPlain, blocks: finalBlocks } = parseCodeBlocks(finalText);
+    if (finalBlocks.length > 0) {
+      bubble.textContent = finalPlain || 'İşte oluşturduğum kod:';
+      const msgEl = bubble.closest('.message');
+      let container = msgEl.querySelector('.file-cards-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.className = 'file-cards-container';
+        bubble.parentElement.appendChild(container);
+      }
+      finalBlocks.forEach(block => createFileCard(block.code, block.language, container));
+    } else {
+      bubble.textContent = finalText;
+    }
     bubble.classList.remove('thinking');
+    // Scroll after rendering cards
+    requestAnimationFrame(() => {
+      const conv = $('#conversation');
+      conv.scrollTop = conv.scrollHeight;
+    });
     used++;
     localStorage.setItem('multiai-used', used);
     
@@ -1447,8 +1743,30 @@ async function send() {
     }
   } finally {
     busy = false;
+    stopRequested = false;
+    hideStopButton();
     updateUI();
   }
+}
+
+function stopGeneration() {
+  stopRequested = true;
+  showToast('⏹ Yanıt durduruldu', 'info');
+}
+
+function showStopButton() {
+  const btn = $('#send');
+  btn.innerHTML = '<i class="fa-solid fa-stop"></i>';
+  btn.classList.add('stop-mode');
+  btn.disabled = false;
+  btn.title = 'Durdur';
+}
+
+function hideStopButton() {
+  const btn = $('#send');
+  btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+  btn.classList.remove('stop-mode');
+  btn.title = 'Gönder';
 }
 
 function fresh() {
@@ -1790,8 +2108,14 @@ $('#startNow')?.addEventListener('click', () => {
   login.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.04)' }, { transform: 'scale(1)' }], { duration: 520, easing: 'ease-out' });
 });
 
-// Send
-$('#send').onclick = send;
+// Send / Stop
+$('#send').onclick = () => {
+  if (busy) {
+    stopGeneration();
+  } else {
+    send();
+  }
+};
 $('#prompt').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
 
 // Navigation
@@ -1997,6 +2321,37 @@ $('#addUserApiKey').onclick = () => {
 // Model panel
 $('#modelTrigger').onclick = () => $('#modelPanel').classList.toggle('show');
 $('#modelSearch').oninput = e => renderModels(e.target.value);
+
+// Preview panel controls
+$('#previewCloseBtn').onclick = closePreview;
+$('#previewDownloadBtn').onclick = () => {
+  if (currentPreviewCode && currentPreviewFilename) downloadCode(currentPreviewCode, currentPreviewFilename);
+};
+$('#previewNewTabBtn').onclick = () => {
+  if (currentPreviewCode) {
+    const w = window.open();
+    w.document.write(currentPreviewCode);
+    w.document.close();
+  }
+};
+
+// Preview tab switching
+$$('#previewTabs .preview-tab').forEach(tab => {
+  tab.onclick = () => {
+    $$('#previewTabs .preview-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const mode = tab.dataset.tab;
+    if (mode === 'preview') {
+      $('#previewIframe').style.display = 'block';
+      $('#previewCodeView').style.display = 'none';
+      if (currentPreviewCode) $('#previewIframe').srcdoc = currentPreviewCode;
+    } else {
+      $('#previewIframe').style.display = 'none';
+      $('#previewCodeView').style.display = 'block';
+      $('#previewCodeView').textContent = currentPreviewCode;
+    }
+  };
+});
 
 // Close panels on outside click
 document.addEventListener('click', e => {
